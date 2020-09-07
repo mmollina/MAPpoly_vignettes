@@ -16,3 +16,4 @@ This repository was created to host vignettes and scripts to perform polyploid g
   
 # Scripts
 * [SuperMASSA genotype probabilities using R (as proposed by Serang et al. (2012)](https://github.com/mmollina/MAPpoly_vignettes/blob/master/misc_scripts/SuperMASSA_probs_in_R.R)
+* [MAPpoly test script](https://github.com/mmollina/MAPpoly_vignettes/blob/master/misc_scripts/MAPpoly_test.R)

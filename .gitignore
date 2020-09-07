@@ -2,6 +2,8 @@
 *.Rproj
 *.Rhistory
 *.RData
+*.rda
 *.md
 *.Ruserdata
 .Rproj.user
+vignette_tetraploid/
