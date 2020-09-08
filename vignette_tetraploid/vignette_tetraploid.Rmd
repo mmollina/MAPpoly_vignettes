@@ -155,7 +155,7 @@ pheno-----------------------
 geno------------------------
 ```
 
-For more information about MAPpoly file format, please see `?read_geno` and `?read_geno_dist` documentation from `MAPpoly` package.
+For more information about MAPpoly file format, please see `?read_geno` and `?read_geno_prob` documentation from `MAPpoly` package.
 
 ### Using `read_geno`
 
@@ -206,7 +206,7 @@ dat.dose.mpl
 
 This function automatically excludes monomorphic markers, keeping only informative ones. It also performs chi-square tests for all markers, considering the expected segregation patterns under Mendelian inheritance, random chromosome pairing and no double reduction. You can optionally use the `filter.non.conforming` logical argument (default = TRUE), which excludes non-expected genotypes under these assumptions.
 
-### Using `read_geno_dist`
+### Using `read_geno_prob`
 
 Following the same header described before should be a table containing the probability distribution for each combination of marker $\times$ individual. Each line of this table represents the combination of one marker with one individual, and its respective probabilities of having each possible allele dosage. The first two columns represent the marker and the individual, respectively, and the remaining elements represent the probability associated with each one of the possible dosages, as follows:
 
@@ -260,17 +260,17 @@ M4 Ind3 0.0 0.1 0.9 0.0 0.0
 M5 Ind3 0.1 0.9 0.0 0.0 0.0
 ```
 
-Once the file is ready, use the function `read_geno_dist` to read it:
+Once the file is ready, use the function `read_geno_prob` to read it:
 
 ```{r load_data_w_probs, eval=TRUE}
 ft="https://raw.githubusercontent.com/mmollina/MAPpoly_vignettes/master/data/SolCAP"
 tempfl <- tempfile()
 download.file(ft, destfile = tempfl)
-dat.dist.mpl <- read_geno_dist(file.in  = tempfl, prob.thres = 0.95, elim.redundant = TRUE)
+dat.prob.mpl <- read_geno_prob(file.in  = tempfl, prob.thres = 0.95, elim.redundant = TRUE)
 ```
 
 ``` r
-dat.dist.mpl
+dat.prob.mpl
 ```
 
 **Important note:** as this type of file contains the probability distribution of all possible dosages, it may take longer to read. 
@@ -338,7 +338,7 @@ outfile2 = tempfile()
 Export_MAPpoly(exampleRAD_mapping, file = outfile2)
 
 # Read in MAPpoly
-mydata_polyrad = read_geno_dist(outfile2)
+mydata_polyrad = read_geno_prob(outfile2)
 ```
 
 ``` r
@@ -433,7 +433,7 @@ plot_mrk_info(input.data = dat.dose.mpl, mrk = 240)
 
 ```{r mrk_info2, fig.width=10, fig.height=7}
 # For a probability-based data analysis of the marker solcap_snp_c1_13686
-plot_mrk_info(input.data = dat.dist.mpl, mrk = 'solcap_snp_c1_13686')
+plot_mrk_info(input.data = dat.prob.mpl, mrk = 'solcap_snp_c1_13686')
 ```
 
 When applied to a dosage-based dataset, the function outputs a figure showing: marker name and position in the dataset, allele dosage in parents 1 and 2, proportion of missing data, p-value of the associated $\chi^2$ test for Mendelian segregation, sequence and position information (when available). The figure also contains a plot with the allele dosage and missing data distibution in the population.
@@ -645,7 +645,7 @@ Colored rectangles (red and blue) indicate the presence of the allelic variant i
 
 ## Reestimating the map considering genotyping errors
 
-Though current technologies enabled the genotyping of thousands of SNPs, they are quite prone to genotyping errors, especially in polyploid species. One way to address this problem is to associate a probability distribution to each one of the markers and allow the HMM to update their probability. This procedure can be applied using either the probability distribution provided by the genotype calling software (loaded in `MAPpoly` using the function `read_geno_dist`) or assuming a global genotype error. For a detailed explanation of this procedure, please see [Mollinari and Garcia, 2019](https://doi.org/10.1534/g3.119.400378). Briefly, the use of a prior information will update the genotype of the markers based on a global chromosome structure. In this tutorial, since we are analyzing the dosage data with no probability distribution associated, the second approch will be used. 
+Though current technologies enabled the genotyping of thousands of SNPs, they are quite prone to genotyping errors, especially in polyploid species. One way to address this problem is to associate a probability distribution to each one of the markers and allow the HMM to update their probability. This procedure can be applied using either the probability distribution provided by the genotype calling software (loaded in `MAPpoly` using the function `read_geno_prob`) or assuming a global genotype error. For a detailed explanation of this procedure, please see [Mollinari and Garcia, 2019](https://doi.org/10.1534/g3.119.400378). Briefly, the use of a prior information will update the genotype of the markers based on a global chromosome structure. In this tutorial, since we are analyzing the dosage data with no probability distribution associated, the second approch will be used. 
 
 ```{r, map_prior_lg3, eval=TRUE}
 lg3.map.error <- est_full_hmm_with_global_error(input.map = lg3.map, error = 0.05)
@@ -753,14 +753,14 @@ if(cor(mrks.in.gen, mrks.in.mds) < 0){
 }
 map.comp.3.gen<-get_submap(input.map = lg3.map, match(mrks.in.gen, lg3.map$maps[[1]]$seq.num), verbose = FALSE)
 map.comp.3.mds<-get_submap(input.map = lg3.map.mds, match(mrks.in.mds, lg3.map.mds$maps[[1]]$seq.num), verbose = FALSE)
-dist.3.gen<-extract_map(lg3.map)
-dist.3.mds<-extract_map(lg3.map.mds)
-names(dist.3.gen)<-map.comp.3.gen$maps[[1]]$seq.num
-names(dist.3.mds)<-map.comp.3.mds$maps[[1]]$seq.num
+prob.3.gen<-extract_map(lg3.map)
+prob.3.mds<-extract_map(lg3.map.mds)
+names(prob.3.gen)<-map.comp.3.gen$maps[[1]]$seq.num
+names(prob.3.mds)<-map.comp.3.mds$maps[[1]]$seq.num
 ```
 
 ```{r, eval=T, results='hide', fig.align='center'}
-matplot(t(data.frame(dist.3.gen,dist.3.mds[names(dist.3.gen)])), 
+matplot(t(data.frame(prob.3.gen,prob.3.mds[names(prob.3.gen)])), 
         type="b", pch="_", col=1, lty=1, lwd = .5, xlab= "", 
         ylab="Marker position (cM)", axes = F)
 axis(2)
