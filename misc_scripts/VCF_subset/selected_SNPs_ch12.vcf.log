@@ -1,0 +1,17 @@
+
+VCFtools - 0.1.17
+(C) Adam Auton and Anthony Marcketta 2009
+
+Parameters as interpreted:
+	--vcf /Users/marcelomollinari/repos/BT_map/data/vcf_sweetpotato_original/myGBSGenos_trifida_mergedSNPs_mergedTaxa_chr12.vcf
+	--recode-INFO-all
+	--out selected_SNPs_ch12.vcf
+	--recode
+	--snps SNPs_ch12.txt
+
+Warning: Expected at least 2 parts in FORMAT entry: ID=PL,Number=3,Type=Float,Description="Normalized, Phred-scaled likelihoods for AA,AB,BB genotypes where A=ref and B=alt; not applicable if site is not biallelic">
+Warning: Expected at least 2 parts in FORMAT entry: ID=PL,Number=3,Type=Float,Description="Normalized, Phred-scaled likelihoods for AA,AB,BB genotypes where A=ref and B=alt; not applicable if site is not biallelic">
+After filtering, kept 338 out of 338 Individuals
+Outputting VCF file...
+After filtering, kept 1000 out of a possible 77239 Sites
+Run Time = 6.00 seconds

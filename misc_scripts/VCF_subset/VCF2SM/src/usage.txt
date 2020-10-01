@@ -1,0 +1,51 @@
+python SuperMassa.py --option_without_arguments --option_with_arguments=value ...
+--------------------------------------------------------------------------------------
+
+Options without arguments:
+-------------------------------------------
+
+optimal_inference: specifies maximum a posteriori (MAP) search via branch and bound. otherwise, approximation via maximum likelihood (ML) is performed
+
+display_progress: show results for each ploidy, sigma, and theta as serach is performed
+
+print_genotypes_histogram: outputs the histogram of how many individuals are assigned to each genotype category
+
+print_genotypes: prints the predicted genotype for each individual
+
+draw_genotypes: draw the genotypes
+
+draw_genotype_histogram: draw the genotype histogram
+
+
+Options with arguments:
+-------------------------------------------
+
+inference:
+	ploidy: Search the ploidy without considering population structure
+	f1: Search the ploidy and population parameter composed of parents (theta = Q1, Q2)
+	hw: Search the ploidy and population parameter composed of allele frequency (theta = alpha)
+
+file: the scatterplot data file being processed
+
+ploidy_range:
+	formatted thus: begin:end:step where step is optional
+	2:6 does 2,4,6
+	2:10:1 does 2,3,4,5,6
+
+sigma_range: the possible values of the smoothing parameter used in inference (higher sigma allows for greater variance in the clusters)
+	formatted thus: begin:end:step where step is optional (see ploidy_range)
+
+f1_parent_data:
+	the scatterplot data file of the parents (for f1 inference only)
+
+save_figures: provides the prefix for the local .png figures generated (requires draw_genotypes or draw_genotype_histogram to be useful)
+
+-----------------------
+
+Examples:
+
+The following will perform inference on the test data and draw it interactively:
+python SuperMASSA.py --draw_genotypes --draw_genotype_histogram --inference f1 --file ../data/test/simple_data_1,1x1,1 --ploidy_range 2:6 --sigma_range 0.01:0.1:0.01
+
+The following will perform inference on the test data and only print the predicted ploidy, and parameters:
+python SuperMASSA.py --inference f1 --file ../data/test/simple_data_1,1x1,1 --ploidy_range 2:6 --sigma_range 0.01:0.1:0.01
