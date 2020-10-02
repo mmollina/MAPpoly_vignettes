@@ -3,7 +3,11 @@
 *.Rhistory
 *.RData
 *.rda
+*.rdb
+*.RData
 *.md
 *.Ruserdata
 .Rproj.user
-vignette_tetraploid/
+vignette_tetraploid/vignette_tetraploid_cache/html/*
+vignette_tetraploid/vignette_tetraploid_files/*
+vignette_tetraploid/vignette_tetraploid_files/figure-html/*
