@@ -1,11 +1,3 @@
-#####
-## Analytic procedures to construct the B2721 potato map - Map Summary
-## -----------------------------------------------------------
-## Author: Marcelo Mollinari
-## Date: Sun Jul 19, 2020
-## Bioinformatics Research Center
-## North Carolina State University 
-#####
 require(mappoly)
 require(ggplot2)
 require(formattable)
@@ -21,9 +13,10 @@ s <- make_seq_mappoly(tetra.solcap, 'all')
 er <- elim_redundant(s)
 plot(er)
 su <- make_seq_mappoly(er)
-# will take ~ 13 min
-all.pairs <- est_pairwise_rf(input.seq = su)
-all.pairs
+tpt <- est_pairwise_rf(input.seq = su, ncpus = 16)
+
+
+
 plot(all.pairs, 90, 91)
 mat <- rf_list_to_matrix(all.pairs)
 plot(mat)

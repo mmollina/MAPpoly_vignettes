@@ -1,0 +1,72 @@
+---
+title: "Timing MAPpoly examples and tests"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+require(mappoly)
+#load('all_run.RData')
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(cache = TRUE)
+knitr::opts_chunk$set(eval = TRUE)
+```
+
+## Timing examples
+
+```{r, results=FALSE, fig.show='hide'}
+flz<-list.files(path = "~/repos/MAPpoly/man", full.names = T)
+names(flz) <- list.files(path = "~/repos/MAPpoly/man/", full.names = F)
+require(mappoly)
+require(stringr)
+sentinel0 <- yz <- NULL
+for(iz in 1:length(flz)){
+  tools::Rd2ex(Rd = flz[iz], out = "~/temp.R", commentDonttest = F)
+  sentinel1 <- scan(file = "~/temp.R", what = "character")
+  if(identical(sentinel0, sentinel1)){
+    yz <- rbind(yz, data.frame(func = str_remove(string = names(flz[iz]), pattern = ".Rd"), 
+                               time = 0, row.names = NULL, example = "no", donttest = NA, 
+                               passed = NA))
+    next()
+  }
+  tz <- grepl(pattern = "No test:",  paste(sentinel1, collapse = " "))
+  if(grepl(pattern = "inter",  paste(sentinel1, collapse = " ")))
+    system(paste("sed -i '' 's|inter = TRUE|inter = FALSE|g'", "~/temp.R"))
+  if(grepl(pattern = "inter",  paste(sentinel1, collapse = " ")))
+    system(paste("sed -i '' 's|inter=TRUE|inter = FALSE|g'", "~/temp.R"))
+  xe <- tryCatch(xz <- system.time(source("~/temp.R")), error = function(e) e)
+  if(inherits(xe, "error"))
+  {
+    yz <- rbind(yz, data.frame(func = str_remove(string = names(flz[iz]), pattern = ".Rd"), 
+                               time = xz[3], row.names = NULL, example = "yes", donttest = tz, 
+                               passed = FALSE))
+  }
+  yz <- rbind(yz, data.frame(func = str_remove(string = names(flz[iz]), pattern = ".Rd"), 
+                             time = xz[3], row.names = NULL, example = "yes", donttest = tz,  
+                             passed = TRUE))
+  print(yz)
+  sentinel0 <- sentinel1
+}
+yz<-yz[order(yz$time, decreasing = T), ]
+colnames(yz) <- c("func","time","example","donttest","passed" )
+yz <- rbind(yz, data.frame(func = "Total", time = sum(yz$time), row.names = NULL, 
+                           example = "--", donttest = tz, passed = all(yz$passed, na.rm = T)))
+```
+
+```{r}
+library(formattable)
+formattable::formattable(yz)
+```
+
+## Timing tests
+```{r}
+x <- devtools::test(pkg = "~/repos/MAPpoly/")
+df <- dplyr::as_tibble(t(sapply(x, function(x) sapply(x[1:6], unlist))))
+df[,4:6] <- apply(df[,4:6], 2, as.numeric)
+formattable::formattable(df)
+apply(df[,4:6], 2, sum)
+```
+
