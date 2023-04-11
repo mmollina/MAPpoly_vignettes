@@ -43,7 +43,7 @@ dat<-VariantAnnotation::readVcf(file = "~/repos/BT_map/data/vcf2sm_2_6/sm_2_6_tr
 geno.dat<-VariantAnnotation::geno(dat)
 all.snp.names <- dimnames(geno.dat$AD)[[1]]
 setwd("~/repos/MAPpoly_vignettes/sandbox/supermassa/")
-
+ploidy <- 6
 for(snp.name in all.snp.names){
   raw<-geno.dat$AD[snp.name,,]
   D<-raw[,order(apply(raw, 2, mean))]
@@ -85,6 +85,9 @@ for(snp.name in all.snp.names){
   dimnames(M.temp)<-list(as.character(A[,1]), c(0:ploidy))
   M[rownames(M.temp),]<-M.temp
   sm.probs<-round(t(apply(M, 1, function(x) exp(x-logSumExp(x)))),6)
+  a <- unlist(apply(sm.probs, 1, function(x) as.numeric(names(which.max(x)))))
+  g <- cbind(a, ploidy - a)
+  rownames(g) <- names(a)
   ## Likelihood matrix for BT data set
   l<-matrix(NA, nrow = nrow(g), ncol = ploidy + 1, dimnames = list(rownames(g), 0:ploidy))
   gtest<-matrix(c(0:ploidy,ploidy:0), ncol = 2)
