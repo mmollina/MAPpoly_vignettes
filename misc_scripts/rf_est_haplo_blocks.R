@@ -51,14 +51,17 @@ rand.haplo.block.2$maps[[1]]$seq.ph$Q <- ph_matrix_to_list(ph.p2.b2)
 
 ## print haplo-blocks and randomized haplo-blocks
 print(haplo.block.1, detailed = TRUE)
-print(rand.haplo.block.1, detailed = TRUE)
 print(haplo.block.2, detailed = TRUE)
-print(rand.haplo.block.2, detailed = TRUE)
+## original configuration
 ## ABBC x DEEE
 ##      .
 ##      .
 ##      .
 ## ABBC x DAAA
+
+
+print(rand.haplo.block.2, detailed = TRUE)
+print(rand.haplo.block.1, detailed = TRUE)
 
 ##### Estimating multialelic rf and phase ##############
 s <- make_seq_mappoly(tetra.solcap, 
