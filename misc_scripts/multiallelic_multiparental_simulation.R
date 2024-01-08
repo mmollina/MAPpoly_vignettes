@@ -1,10 +1,9 @@
- require(stringr)
-    require(reshape2)
-    require(tibble)
-    require(plyr)
-    require(dplyr)
-    require(gtools)
-
+require(stringr)
+require(reshape2)
+require(tibble)
+require(plyr)
+require(dplyr)
+require(gtools)
 
 #' Simulate multiallelic homology groups
 #'
