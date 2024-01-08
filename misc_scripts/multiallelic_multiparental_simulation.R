@@ -1,3 +1,11 @@
+ require(stringr)
+    require(reshape2)
+    require(tibble)
+    require(plyr)
+    require(dplyr)
+    require(gtools)
+
+
 #' Simulate multiallelic homology groups
 #'
 #' @param void internal function to be documented
