@@ -1,0 +1,72 @@
+# Navigate to the RStudio container preparation directory
+cd Rstudio_server_container_prep/
+
+# Pull and save the latest Rocker RStudio Docker image
+sudo docker pull rocker/rstudio:latest
+sudo docker save -o rstudio.tar rocker/rstudio:latest
+
+# Build a writable Singularity container from the Docker image
+sudo singularity build --sandbox rstudio_sing/ docker-archive://rstudio.tar
+sudo singularity shell --writable rstudio_sing/
+
+# Update and upgrade system packages
+sudo apt update
+sudo apt upgrade
+
+# Install necessary dependencies for R and RStudio
+sudo apt install zlib1g zlib1g-dev htop libxml2 libxtst6 tk libbz2-dev liblzma-dev nano emacs
+
+# Modify the sources list if needed
+sudo nano /etc/apt/sources.list
+
+# Install additional libraries for R package compatibility
+sudo apt-get install libicu-dev libcurl4-openssl-dev
+
+# Manually install ICU library version 66, if not available in default sources
+wget http://archive.ubuntu.com/ubuntu/pool/main/i/icu/libicu66_66.1-2ubuntu2_amd64.deb
+sudo dpkg -i libicu66_66.1-2ubuntu2_amd64.deb
+
+# Open R to install R packages
+sudo R
+
+# Install core R packages
+install.packages("tidyverse")
+install.packages("devtools")
+install.packages("covr")
+
+# Install mappoly package from GitHub
+devtools::install_github("mmollina/mappoly", dependencies=TRUE)
+
+# Install additional R packages
+install.packages("shiny")
+install.packages("AGHmatrix")
+install.packages("vcfR")
+
+# Install Bioconductor and required packages
+if (!require("BiocManager", quietly = TRUE)) install.packages("BiocManager")
+BiocManager::install("VariantAnnotation")
+BiocManager::install(c("GO.db", "preprocessCore", "impute"))
+
+# Install other useful packages
+install.packages("HiClimR")
+install.packages(c("matrixStats", "Hmisc", "splines", "foreach", "doParallel", "fastcluster", "dynamicTreeCut", "survival"))
+install.packages("WGCNA")
+install.packages("lightgbm")
+install.packages("caret")
+install.packages("data.table")
+
+# Install mappoly2 and qtlpoly packages from GitHub
+devtools::install_github("mmollina/mappoly2", dependencies=TRUE)
+devtools::install_github("gabrielgesteira/qtlpoly")
+
+# Exit R session
+q()
+
+# Exit Singularity shell
+exit
+
+# Build the final Singularity image from the writable container
+sudo singularity build rstudio.sif rstudio_sing/
+
+# Transfer the Singularity image to the desired server
+scp rstudio.sif mmollin@brc:~/Rstudio_server/
